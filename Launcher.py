@@ -164,14 +164,15 @@ def gross_parse(casemap, type_list, outputfile):
 def main():
 
     #create gross wordlist
+    '''
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
     casemap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
     gross_parse(casemap,type_list,outputfile)
+    '''
 
-
-    #run_model()
+    run_model()
 
 
 
