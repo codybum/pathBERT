@@ -135,15 +135,32 @@ def gross_parse(casemap, type_list, outputfile):
                         single_part.append(case_id)
 
                         sentences = tokenizer.tokenize(case['gross_description'])
-                        wf.write(sentences[0].replace("\t"," ").replace("\n"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
-                        #print("[" + sentences[0] + "]")
+                        s = sentences[0]
+                        s = s.replace("\"","")
+                        s = s.replace("The specimen is received in formalin labeled ","")
+                        s = s.replace("Specimen is received in formalin labeled ","")
+                        s = s.replace("\t", " ").replace("\n", " ")
+                        s = s.lower()
+
+                        if len(s) > 25:
+                            wf.write(s + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+
 
                     elif isMultiPart:
                         multipart_count.append(case_id)
 
                         sentences = tokenizer.tokenize(case['gross_description'])
+                        s = sentences[0]
+                        s = s.replace("\"", "")
+                        s = s.replace("The specimen is received in formalin labeled ", "")
+                        s = s.replace("Specimen is received in formalin labeled ", "")
+                        s = s.replace("\t", " ").replace("\n", " ")
+                        s = s.replace("A: ", "")
+                        s = s.lower()
 
-                        wf.write(sentences[0].replace("\t", " ").replace("A: ","").replace("\n"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+                        if len(s) > 25:
+                            wf.write(s + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+
                         #print("[" + sentences[0] + "]")
 
                     elif isBroken:
@@ -171,6 +188,7 @@ def main():
     outputfile = "slist.tsv"
     gross_parse(casemap,type_list,outputfile)
     '''
+
     run_model()
 
 
