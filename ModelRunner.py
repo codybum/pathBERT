@@ -32,9 +32,9 @@ def flat_accuracy(preds, labels):
     pred_flat = np.argmax(preds, axis=1).flatten()
     print("pred_flat: " + str(pred_flat))
     labels_flat = labels.flatten()
-    labels_flat_2 = np.argmax(labels, axis=1).flatten()
+    #labels_flat_2 = np.argmax(labels).flatten()
     #print("labels: " + str(labels))
-    print("labels_flat_2: " + str(labels_flat_2))
+    print("labels_flat: " + str(labels_flat))
     return np.sum(pred_flat == labels_flat) / len(labels_flat)
 
 
@@ -75,15 +75,18 @@ def run_model():
     #df = pd.read_csv("./cola_public/raw/in_domain_train.tsv", delimiter='\t', header=None,
     #                 names=['sentence_source', 'label', 'label_notes', 'sentence'])
 
+    headers = ['sentence','label']
+    dtypes = ['str', 'long']
+
     df = pd.read_csv("slist.tsv", delimiter='\t', header=None,
-                     names=['sentence','label'])
+                     names=['sentence','label'], )
 
     # Report the number of sentences.
     print('Number of training sentences: {:,}\n'.format(df.shape[0]))
 
     # Display 10 random rows from the data.
     # df.sample(10)
-    print(df.loc[df.label == 0].sample(5)[['sentence', 'label']])
+    print(df.loc[df.label == 3].sample(5)[['sentence', 'label']])
 
     # Get the lists of sentences and their labels.
     sentences = df.sentence.values

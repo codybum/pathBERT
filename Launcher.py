@@ -135,7 +135,7 @@ def gross_parse(casemap, type_list, outputfile):
                         single_part.append(case_id)
 
                         sentences = tokenizer.tokenize(case['gross_description'])
-                        wf.write(sentences[0].replace("\t"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+                        wf.write(sentences[0].replace("\t"," ").replace("\n"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
                         #print("[" + sentences[0] + "]")
 
                     elif isMultiPart:
@@ -143,7 +143,7 @@ def gross_parse(casemap, type_list, outputfile):
 
                         sentences = tokenizer.tokenize(case['gross_description'])
 
-                        wf.write(sentences[0].replace("\t", " ").replace("A: ","") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+                        wf.write(sentences[0].replace("\t", " ").replace("A: ","").replace("\n"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
                         #print("[" + sentences[0] + "]")
 
                     elif isBroken:
@@ -171,7 +171,6 @@ def main():
     outputfile = "slist.tsv"
     gross_parse(casemap,type_list,outputfile)
     '''
-
     run_model()
 
 
