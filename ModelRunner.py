@@ -197,7 +197,7 @@ def run_model():
     # linear classification layer on top.
     model = BertForSequenceClassification.from_pretrained(
         "bert-base-uncased",  # Use the 12-layer BERT model, with an uncased vocab.
-        num_labels=4,  # The number of output labels--2 for binary classification.
+        num_labels=314,  # The number of output labels--2 for binary classification.
         # You can increase this for multi-class tasks.
         output_attentions=False,  # Whether the model returns attentions weights.
         output_hidden_states=False,  # Whether the model returns all hidden-states.
@@ -216,7 +216,7 @@ def run_model():
     # Number of training epochs. The BERT authors recommend between 2 and 4.
     # We chose to run for 4, but we'll see later that this may be over-fitting the
     # training data.
-    epochs = 4
+    epochs = 2
 
     # Total number of training steps is [number of batches] x [number of epochs].
     # (Note that this is not the same as the number of training samples).

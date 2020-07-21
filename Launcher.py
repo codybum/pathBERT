@@ -8,21 +8,26 @@ def parsetypelist(masterfile, type_list):
 
     file1 = open(masterfile, 'r')
     lines = file1.readlines()
-
+    linecount = 0
     casemap = dict()
     for line in lines:
-        line = line.strip()
-        sstr = line.split(",")
-        part = sstr[24].upper()
-        case_id = sstr[0]
-        isFound = False
-        foundtype = ""
-        for type in type_list:
-            if type.upper() in part:
+        if linecount > 0:
+            line = line.strip()
+            sstr = line.split(",")
+            part = sstr[24].upper()
+            case_id = sstr[0]
+            isFound = False
+            lasttype = ""
+            if len(type_list) > 0:
+                for type in type_list:
+                    if type.upper() in part:
+                        isFound = True
+                        lasttype = type
+            else:
                 isFound = True
-                foundtype = type
-        if isFound:
-            casemap[case_id] = foundtype
+            if isFound:
+                casemap[case_id] = part
+        linecount += 1
 
     return casemap
 
@@ -34,10 +39,9 @@ def multiNumber(numberList, firstline):
 
     return False
 
-def gross_parse(casemap, type_list, outputfile):
+def gross_parse(casemap, outputfile):
 
-    type_list = sorted(type_list)
-    print(type_list)
+    type_list = []
 
     wf = open(outputfile, "w")
 
@@ -131,6 +135,10 @@ def gross_parse(casemap, type_list, outputfile):
                     # else:
                     #    print(firstline)
 
+                    type = casemap[case_id]
+                    if type not in type_list:
+                        type_list.append(type)
+
                     if isSinglePart:
                         single_part.append(case_id)
 
@@ -143,7 +151,7 @@ def gross_parse(casemap, type_list, outputfile):
                         s = s.lower()
 
                         if len(s) > 25:
-                            wf.write(s + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+                            wf.write(s + "\t" + str(type_list.index(type)) + "\n")
 
 
                     elif isMultiPart:
@@ -159,7 +167,7 @@ def gross_parse(casemap, type_list, outputfile):
                         s = s.lower()
 
                         if len(s) > 25:
-                            wf.write(s + "\t" + str(type_list.index(casemap[case_id])) + "\n")
+                            wf.write(s + "\t" + str(type_list.index(type)) + "\n")
 
                         #print("[" + sentences[0] + "]")
 
@@ -177,16 +185,18 @@ def gross_parse(casemap, type_list, outputfile):
     print("Broken Gross: " + str(len(broken)) + " " + str(round((len(broken)/total)*100)) + "%")
     print("Unknown Gross: " + str(len(unknown)) + " " + str(round((len(unknown)/total)*100)) + "%")
     wf.close()
+    print("type_count: " + str(len(type_list)))
 
 def main():
 
     #create gross wordlist
     '''
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
-    type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
+    #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
+    type_list = []
     casemap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    gross_parse(casemap,type_list,outputfile)
+    gross_parse(casemap,outputfile)
     '''
 
     run_model()
