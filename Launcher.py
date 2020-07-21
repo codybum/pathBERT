@@ -142,9 +142,10 @@ def gross_parse(casemap, outputfile):
                     if isSinglePart:
                         single_part.append(case_id)
 
-                        sentences = tokenizer.tokenize(case['gross_description'])
-                        s = sentences[0]
-                        s = s.replace("\"","")
+                        #sentences = tokenizer.tokenize(case['gross_description'])
+                        #s = sentences[0]
+                        #s = s.replace("\"","")
+                        s = case['gross_description']
                         s = s.replace("The specimen is received in formalin labeled ","")
                         s = s.replace("Specimen is received in formalin labeled ","")
                         s = s.replace("\t", " ").replace("\n", " ")
@@ -157,8 +158,9 @@ def gross_parse(casemap, outputfile):
                     elif isMultiPart:
                         multipart_count.append(case_id)
 
-                        sentences = tokenizer.tokenize(case['gross_description'])
-                        s = sentences[0]
+                        #sentences = tokenizer.tokenize(case['gross_description'])
+                        #s = sentences[0]
+                        s = case['gross_description']
                         s = s.replace("\"", "")
                         s = s.replace("The specimen is received in formalin labeled ", "")
                         s = s.replace("Specimen is received in formalin labeled ", "")
@@ -192,8 +194,8 @@ def main():
     #create gross wordlist
     '''
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
-    #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
-    type_list = []
+    type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
+    #type_list = []
     casemap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
     gross_parse(casemap,outputfile)
