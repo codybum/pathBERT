@@ -136,7 +136,7 @@ def run_model():
         encoded_dict = tokenizer.encode_plus(
             sent,  # Sentence to encode.
             add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-            max_length=4,  # Pad & truncate all sentences.
+            max_length=457,  # Pad & truncate all sentences.
             truncation=True,  # Pad & truncate all sentences.
             pad_to_max_length=True,
             return_attention_mask=True,  # Construct attn. masks.
@@ -197,7 +197,7 @@ def run_model():
     # linear classification layer on top.
     model = BertForSequenceClassification.from_pretrained(
         "bert-base-uncased",  # Use the 12-layer BERT model, with an uncased vocab.
-        num_labels=314,  # The number of output labels--2 for binary classification.
+        num_labels=4,  # The number of output labels--2 for binary classification.
         # You can increase this for multi-class tasks.
         output_attentions=False,  # Whether the model returns attentions weights.
         output_hidden_states=False,  # Whether the model returns all hidden-states.
