@@ -1,5 +1,5 @@
 import json
-
+import re
 import nltk
 
 from ModelRunner import run_model
@@ -142,24 +142,36 @@ def gross_parse(casemap, outputfile):
                     if isSinglePart:
                         single_part.append(case_id)
 
-                        #sentences = tokenizer.tokenize(case['gross_description'])
-                        #s = sentences[0]
-                        #s = s.replace("\"","")
+                        phrases = re.findall('"([^"]*)"', case['gross_description'])
+                        for phrase in phrases:
+                            phrase = phrase.lower()
+                            wf.write(phrase + "\t" + str(type_list.index(type)) + "\n")
+
+                        '''
+                        sentences = tokenizer.tokenize(case['gross_description'])
+                        s = sentences[0]
+                        s = s.replace("\"","")
                         s = case['gross_description']
                         s = s.replace("The specimen is received in formalin labeled ","")
                         s = s.replace("Specimen is received in formalin labeled ","")
                         s = s.replace("\t", " ").replace("\n", " ")
                         s = s.lower()
-
+                    
                         if len(s) > 25:
                             wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-
+                        '''
 
                     elif isMultiPart:
                         multipart_count.append(case_id)
 
-                        #sentences = tokenizer.tokenize(case['gross_description'])
-                        #s = sentences[0]
+                        phrases = re.findall('"([^"]*)"', case['gross_description'])
+                        for phrase in phrases:
+                            phrase = phrase.lower()
+                            wf.write(phrase + "\t" + str(type_list.index(type)) + "\n")
+
+                        '''
+                        sentences = tokenizer.tokenize(case['gross_description'])
+                        s = sentences[0]
                         s = case['gross_description']
                         s = s.replace("\"", "")
                         s = s.replace("The specimen is received in formalin labeled ", "")
@@ -170,7 +182,7 @@ def gross_parse(casemap, outputfile):
 
                         if len(s) > 25:
                             wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-
+                        '''
                         #print("[" + sentences[0] + "]")
 
                     elif isBroken:
