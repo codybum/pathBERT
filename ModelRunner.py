@@ -30,11 +30,11 @@ def format_time(elapsed):
 # Function to calculate the accuracy of our predictions vs labels
 def flat_accuracy(preds, labels):
     pred_flat = np.argmax(preds, axis=1).flatten()
-    print("pred_flat: " + str(pred_flat))
+    #print("pred_flat: " + str(pred_flat))
     labels_flat = labels.flatten()
     #labels_flat_2 = np.argmax(labels).flatten()
     #print("labels: " + str(labels))
-    print("labels_flat: " + str(labels_flat))
+    #print("labels_flat: " + str(labels_flat))
     return np.sum(pred_flat == labels_flat) / len(labels_flat)
 
 
