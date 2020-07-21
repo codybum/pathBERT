@@ -32,8 +32,9 @@ def flat_accuracy(preds, labels):
     pred_flat = np.argmax(preds, axis=1).flatten()
     print("pred_flat: " + str(pred_flat))
     labels_flat = labels.flatten()
-    print("labels: " + str(labels))
-    print("labels_flat: " + str(labels_flat))
+    labels_flat_2 = np.argmax(labels, axis=1).flatten()
+    #print("labels: " + str(labels))
+    print("labels_flat_2: " + str(labels_flat_2))
     return np.sum(pred_flat == labels_flat) / len(labels_flat)
 
 
@@ -396,8 +397,8 @@ def run_model():
             logits = logits.detach().cpu().numpy()
             label_ids = b_labels.to('cpu').numpy()
 
-            print("logist: " + str(logits))
-            print("label_ids: " + str(label_ids))
+            #print("logist: " + str(logits))
+            #print("label_ids: " + str(label_ids))
 
             # Calculate the accuracy for this batch of test sentences, and
             # accumulate it over all batches.
