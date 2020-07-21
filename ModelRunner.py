@@ -396,6 +396,9 @@ def run_model():
             logits = logits.detach().cpu().numpy()
             label_ids = b_labels.to('cpu').numpy()
 
+            print("logist: " + str(logits))
+            print("label_ids: " + str(label_ids))
+
             # Calculate the accuracy for this batch of test sentences, and
             # accumulate it over all batches.
             total_eval_accuracy += flat_accuracy(logits, label_ids)
