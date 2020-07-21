@@ -136,7 +136,7 @@ def run_model():
         encoded_dict = tokenizer.encode_plus(
             sent,  # Sentence to encode.
             add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-            max_length=200,  # Pad & truncate all sentences.
+            max_length=185,  # Pad & truncate all sentences.
             truncation=True,  # Pad & truncate all sentences.
             pad_to_max_length=True,
             return_attention_mask=True,  # Construct attn. masks.
