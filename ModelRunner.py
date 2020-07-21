@@ -145,7 +145,7 @@ def run_model():
     # Convert the lists into tensors.
     input_ids = torch.cat(input_ids, dim=0)
     attention_masks = torch.cat(attention_masks, dim=0)
-    labels = torch.tensor(labels)
+    labels = torch.tensor(labels,dtype=torch.long)
 
     # Print sentence 0, now as a list of IDs.
     print('Original: ', sentences[0])
