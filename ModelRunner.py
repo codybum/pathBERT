@@ -79,7 +79,7 @@ def run_model():
 
     # Display 10 random rows from the data.
     # df.sample(10)
-    print(df.loc[df.label == 'ESOBX'].sample(5)[['sentence', 'label']])
+    print(df.loc[df.label == 0].sample(5)[['sentence', 'label']])
 
     # Get the lists of sentences and their labels.
     sentences = df.sentence.values

@@ -34,8 +34,10 @@ def multiNumber(numberList, firstline):
 
     return False
 
+def gross_parse(casemap, type_list, outputfile):
 
-def gross_parse(casemap, outputfile):
+    type_list = sorted(type_list)
+    print(type_list)
 
     wf = open(outputfile, "w")
 
@@ -133,7 +135,7 @@ def gross_parse(casemap, outputfile):
                         single_part.append(case_id)
 
                         sentences = tokenizer.tokenize(case['gross_description'])
-                        wf.write(sentences[0].replace("\t"," ") + "\t" + casemap[case_id] + "\n")
+                        wf.write(sentences[0].replace("\t"," ") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
                         #print("[" + sentences[0] + "]")
 
                     elif isMultiPart:
@@ -141,7 +143,7 @@ def gross_parse(casemap, outputfile):
 
                         sentences = tokenizer.tokenize(case['gross_description'])
 
-                        wf.write(sentences[0].replace("\t", " ").replace("A: ","") + "\t" + casemap[case_id] + "\n")
+                        wf.write(sentences[0].replace("\t", " ").replace("A: ","") + "\t" + str(type_list.index(casemap[case_id])) + "\n")
                         #print("[" + sentences[0] + "]")
 
                     elif isBroken:
@@ -162,15 +164,14 @@ def gross_parse(casemap, outputfile):
 def main():
 
     #create gross wordlist
-    '''
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
     casemap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    gross_parse(casemap,outputfile)
-    '''
+    gross_parse(casemap,type_list,outputfile)
 
-    run_model()
+
+    #run_model()
 
 
 
