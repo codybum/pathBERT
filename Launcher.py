@@ -1,5 +1,7 @@
 import json
 import re
+import string
+
 import nltk
 
 from ModelRunner import run_model
@@ -10,6 +12,7 @@ def parsetypelist(masterfile, type_list):
     lines = file1.readlines()
     linecount = 0
     casemap = dict()
+    labelmap = dict()
     for line in lines:
         if linecount > 0:
             line = line.strip()
@@ -17,19 +20,25 @@ def parsetypelist(masterfile, type_list):
             part = sstr[24].upper()
             case_id = sstr[0]
             isFound = False
-            lasttype = ""
+
             if len(type_list) > 0:
                 for type in type_list:
-                    if type.upper() in part:
+                    if type.upper() == part:
                         isFound = True
-                        lasttype = type
             else:
                 isFound = True
+
             if isFound:
                 casemap[case_id] = part
+                if part in labelmap:
+                    labelmap[part] += 1
+                else:
+                    labelmap[part] = 1
+
         linecount += 1
 
-    return casemap
+    labelmap = sorted(labelmap.items(), key=lambda x: x[1], reverse=True)
+    return casemap, labelmap
 
 def multiNumber(numberList, firstline):
 
@@ -40,6 +49,9 @@ def multiNumber(numberList, firstline):
     return False
 
 def gross_parse(casemap, outputfile):
+
+    partlimit = 1000
+    partCountMap = dict()
 
     type_list = []
 
@@ -135,6 +147,7 @@ def gross_parse(casemap, outputfile):
                     # else:
                     #    print(firstline)
 
+
                     type = casemap[case_id]
                     if type not in type_list:
                         type_list.append(type)
@@ -142,47 +155,89 @@ def gross_parse(casemap, outputfile):
                     if isSinglePart:
                         single_part.append(case_id)
 
+                        '''
                         phrases = re.findall('"([^"]*)"', case['gross_description'])
-                        for phrase in phrases:
-                            phrase = phrase.lower()
-                            wf.write(phrase + "\t" + str(type_list.index(type)) + "\n")
+                        if len(phrases) > 0:
+                            phrase = phrases[0].lower()
+                            phrase = re.sub(r'\d+', '', phrase)
+                            #exclude = set(string.punctuation)
+                            #phrase = phrase.join(ch for ch in phrase if ch not in exclude)
+                            phrase = phrase.replace(" cm ", "")
+                            phrase = phrase.replace(" x ", "")
+
+                            if len(phrase) > 5:
+                                wf.write(phrase + "\t" + str(type_list.index(type)) + "\n")
 
                         '''
-                        sentences = tokenizer.tokenize(case['gross_description'])
-                        s = sentences[0]
-                        s = s.replace("\"","")
+
+                        #sentences = tokenizer.tokenize(case['gross_description'])
+                        #s = sentences[0]
                         s = case['gross_description']
+                        s = s.replace("\"","")
                         s = s.replace("The specimen is received in formalin labeled ","")
                         s = s.replace("Specimen is received in formalin labeled ","")
                         s = s.replace("\t", " ").replace("\n", " ")
+                        s = s.replace(" cm ", "")
+                        s = s.replace(" x ", "")
+
+                        s = s.replace(".", "")
+                        s = s.replace("-", "")
+
+                        s = re.sub(r'\d+', '', s)
                         s = s.lower()
-                    
-                        if len(s) > 25:
-                            wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-                        '''
+
+                        if (len(s) > 25) and (len(nltk.word_tokenize(s)) <= 350):
+                            if type in partCountMap:
+                                if not (partCountMap[type] > partlimit):
+                                    partCountMap[type] += 1
+                                    wf.write(s + "\t" + str(type_list.index(type)) + "\n")
+                            else:
+                                partCountMap[type] = 1
+                                wf.write(s + "\t" + str(type_list.index(type)) + "\n")
+
 
                     elif isMultiPart:
                         multipart_count.append(case_id)
 
-                        phrases = re.findall('"([^"]*)"', case['gross_description'])
-                        for phrase in phrases:
-                            phrase = phrase.lower()
-                            wf.write(phrase + "\t" + str(type_list.index(type)) + "\n")
-
                         '''
-                        sentences = tokenizer.tokenize(case['gross_description'])
-                        s = sentences[0]
+                        phrases = re.findall('"([^"]*)"', case['gross_description'])
+                        if len(phrases) > 0:
+                            phrase = phrases[0].lower()
+                            phrase = re.sub(r'\d+', '', phrase)
+                            #exclude = set(string.punctuation)
+                            #phrase = phrase.join(ch for ch in phrase if ch not in exclude)
+                            phrase = phrase.replace(" cm ", "")
+                            phrase = phrase.replace(" x ", "")
+
+                            if len(phrase) > 5:
+                                wf.write(phrase + "\t" + str(type_list.index(type)) + "\n") 
+                        '''
+                        #sentences = tokenizer.tokenize(case['gross_description'])
+                        #s = sentences[0]
                         s = case['gross_description']
                         s = s.replace("\"", "")
                         s = s.replace("The specimen is received in formalin labeled ", "")
                         s = s.replace("Specimen is received in formalin labeled ", "")
                         s = s.replace("\t", " ").replace("\n", " ")
                         s = s.replace("A: ", "")
+                        s = s.replace(" cm ", "")
+                        s = s.replace(" x ", "")
+
+                        s = s.replace(".", "")
+                        s = s.replace("-", "")
+
+                        s = re.sub(r'\d+', '', s)
                         s = s.lower()
 
-                        if len(s) > 25:
-                            wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-                        '''
+                        if (len(s) > 25) and (len(nltk.word_tokenize(s)) <= 350):
+                            if type in partCountMap:
+                                if not (partCountMap[type] > partlimit):
+                                    partCountMap[type] += 1
+                                    wf.write(s + "\t" + str(type_list.index(type)) + "\n")
+                            else:
+                                partCountMap[type] = 1
+                                wf.write(s + "\t" + str(type_list.index(type)) + "\n")
+
                         #print("[" + sentences[0] + "]")
 
                     elif isBroken:
@@ -191,6 +246,7 @@ def gross_parse(casemap, outputfile):
                         unknown.append(case_id)
 
 
+    print(type_list)
     total = len(single_part) + len(multipart_count) + len(broken) + len(unknown)
     print("\n")
     print("Total Cases: " + str(total))
@@ -204,16 +260,21 @@ def gross_parse(casemap, outputfile):
 def main():
 
     #create gross wordlist
-    '''
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
-    type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1"]
-    #type_list = []
-    casemap = parsetypelist(masterfile, type_list)
+    #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1","BRES"]
+
+    type_list = []
+    casemap, labelmap = parsetypelist(masterfile, type_list)
+    for label in labelmap:
+        if label[1] > 5300:
+            print(str(label[1]) + "->" + label[0])
+            type_list.append(label[0])
+
+    casemap, labelmap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
     gross_parse(casemap,outputfile)
-    '''
 
-    run_model()
+    #run_model()
 
 
 
