@@ -50,7 +50,7 @@ def multiNumber(numberList, firstline):
 
 def gross_parse(casemap, outputfile):
 
-    partlimit = 1000
+    partlimit = 500
     partCountMap = dict()
 
     type_list = []
@@ -170,12 +170,16 @@ def gross_parse(casemap, outputfile):
 
                         '''
 
-                        #sentences = tokenizer.tokenize(case['gross_description'])
-                        #s = sentences[0]
                         s = case['gross_description']
-                        s = s.replace("\"","")
-                        s = s.replace("The specimen is received in formalin labeled ","")
-                        s = s.replace("Specimen is received in formalin labeled ","")
+                        strlen = len(nltk.word_tokenize(s))
+
+                        if strlen > 325:
+                            sentences = tokenizer.tokenize(case['gross_description'])
+                            s = sentences[0]
+
+                        s = s.replace("\"", "")
+                        s = s.replace("The specimen is received in formalin labeled ", "")
+                        s = s.replace("Specimen is received in formalin labeled ", "")
                         s = s.replace("\t", " ").replace("\n", " ")
                         s = s.replace(" cm ", "")
                         s = s.replace(" x ", "")
@@ -183,10 +187,13 @@ def gross_parse(casemap, outputfile):
                         s = s.replace(".", "")
                         s = s.replace("-", "")
 
+                        exclude = set(string.punctuation)
+                        s = ''.join(ch for ch in s if ch not in exclude)
+
                         s = re.sub(r'\d+', '', s)
                         s = s.lower()
 
-                        if (len(s) > 25) and (len(nltk.word_tokenize(s)) <= 350):
+                        if (len(s) > 25):
                             if type in partCountMap:
                                 if not (partCountMap[type] > partlimit):
                                     partCountMap[type] += 1
@@ -212,24 +219,31 @@ def gross_parse(casemap, outputfile):
                             if len(phrase) > 5:
                                 wf.write(phrase + "\t" + str(type_list.index(type)) + "\n") 
                         '''
-                        #sentences = tokenizer.tokenize(case['gross_description'])
-                        #s = sentences[0]
                         s = case['gross_description']
+                        strlen = len(nltk.word_tokenize(s))
+
+                        if strlen > 325:
+                            sentences = tokenizer.tokenize(case['gross_description'])
+                            s = sentences[0]
+
+
                         s = s.replace("\"", "")
                         s = s.replace("The specimen is received in formalin labeled ", "")
                         s = s.replace("Specimen is received in formalin labeled ", "")
                         s = s.replace("\t", " ").replace("\n", " ")
-                        s = s.replace("A: ", "")
                         s = s.replace(" cm ", "")
                         s = s.replace(" x ", "")
 
                         s = s.replace(".", "")
                         s = s.replace("-", "")
 
+                        exclude = set(string.punctuation)
+                        s = ''.join(ch for ch in s if ch not in exclude)
+
                         s = re.sub(r'\d+', '', s)
                         s = s.lower()
 
-                        if (len(s) > 25) and (len(nltk.word_tokenize(s)) <= 350):
+                        if (len(s) > 25):
                             if type in partCountMap:
                                 if not (partCountMap[type] > partlimit):
                                     partCountMap[type] += 1
@@ -237,8 +251,6 @@ def gross_parse(casemap, outputfile):
                             else:
                                 partCountMap[type] = 1
                                 wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-
-                        #print("[" + sentences[0] + "]")
 
                     elif isBroken:
                         broken.append(case_id)
@@ -257,23 +269,29 @@ def gross_parse(casemap, outputfile):
     wf.close()
     print("type_count: " + str(len(type_list)))
 
+    print(partCountMap)
+    return sorted(partCountMap.items(), key=lambda x: x[1], reverse=True)
+
+
 def main():
 
     #create gross wordlist
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1","BRES"]
-
+    '''
     type_list = []
     casemap, labelmap = parsetypelist(masterfile, type_list)
     for label in labelmap:
-        if label[1] > 5300:
-            print(str(label[1]) + "->" + label[0])
+        if label[1] > 2000:
+            #print(str(label[1]) + "->" + label[0])
             type_list.append(label[0])
-
+    '''
+    type_list = ["SKINBX","EMB","TISDIAG","COLONBX1","ESOBX","NBB","TISNON","STOBX","RECBX1","CXBX"]
     casemap, labelmap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    gross_parse(casemap,outputfile)
-
+    partcountmap = gross_parse(casemap,outputfile)
+    for part in partcountmap:
+        print(str(part[1]) + "->" + part[0])
     #run_model()
 
 
