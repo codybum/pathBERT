@@ -94,8 +94,8 @@ def run_model():
 
     # Load the BERT tokenizer.
     print('Loading BERT tokenizer...')
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
-    # tokenizer = BertTokenizer.from_pretrained('./model')
+    #tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
+    tokenizer = BertTokenizer.from_pretrained('./model')
 
     # sentences[0] = 'The specimen is received in formalin labeled "descending colon".'
 
@@ -196,7 +196,8 @@ def run_model():
     # Load BertForSequenceClassification, the pretrained BERT model with a single
     # linear classification layer on top.
     model = BertForSequenceClassification.from_pretrained(
-        "bert-base-uncased",  # Use the 12-layer BERT model, with an uncased vocab.
+        #"bert-base-uncased",  # Use the 12-layer BERT model, with an uncased vocab.
+        './model',
         num_labels=4,  # The number of output labels--2 for binary classification.
         # You can increase this for multi-class tasks.
         output_attentions=False,  # Whether the model returns attentions weights.
@@ -216,7 +217,7 @@ def run_model():
     # Number of training epochs. The BERT authors recommend between 2 and 4.
     # We chose to run for 4, but we'll see later that this may be over-fitting the
     # training data.
-    epochs = 2
+    epochs = 4
 
     # Total number of training steps is [number of batches] x [number of epochs].
     # (Note that this is not the same as the number of training samples).

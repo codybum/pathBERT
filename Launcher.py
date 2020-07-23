@@ -48,9 +48,8 @@ def multiNumber(numberList, firstline):
 
     return False
 
-def gross_parse(casemap, outputfile):
+def gross_parse(casemap, outputfile, partlimit):
 
-    partlimit = 500
     partCountMap = dict()
 
     type_list = []
@@ -173,7 +172,7 @@ def gross_parse(casemap, outputfile):
                         s = case['gross_description']
                         strlen = len(nltk.word_tokenize(s))
 
-                        if strlen > 325:
+                        if strlen > 425:
                             sentences = tokenizer.tokenize(case['gross_description'])
                             s = sentences[0]
 
@@ -219,10 +218,12 @@ def gross_parse(casemap, outputfile):
                             if len(phrase) > 5:
                                 wf.write(phrase + "\t" + str(type_list.index(type)) + "\n") 
                         '''
+
+                        '''
                         s = case['gross_description']
                         strlen = len(nltk.word_tokenize(s))
 
-                        if strlen > 325:
+                        if strlen > 425:
                             sentences = tokenizer.tokenize(case['gross_description'])
                             s = sentences[0]
 
@@ -251,7 +252,7 @@ def gross_parse(casemap, outputfile):
                             else:
                                 partCountMap[type] = 1
                                 wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-
+                    '''
                     elif isBroken:
                         broken.append(case_id)
                     else:
@@ -278,23 +279,54 @@ def main():
     #create gross wordlist
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1","BRES"]
+
     '''
     type_list = []
     casemap, labelmap = parsetypelist(masterfile, type_list)
     for label in labelmap:
-        if label[1] > 2000:
+        if label[1] > 1:
             #print(str(label[1]) + "->" + label[0])
             type_list.append(label[0])
     '''
-    type_list = ["SKINBX","EMB","TISDIAG","COLONBX1","ESOBX","NBB","TISNON","STOBX","RECBX1","CXBX"]
+    #exit(0)
+    #10 list, 188 labels, 1% , max 460, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'COLONBX1', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'ECC1', 'SHAVE1', 'BONE', 'ENDOME', 'TONS', 'LUNGTP', 'LIVNB', 'SDSTY-138', 'VALVE', 'TONSILS', 'FORESK', 'SC', 'DUOBX', 'LN', 'BBT', 'POC', 'AMPEX', 'VAS', 'BOWNT', 'SDSTY-116', 'VULBX', 'BLTUR', 'PLAQUE', 'SKINN', 'CYST', 'BBNON', 'PTH', 'VAGBX', 'THYROIDNT', 'CNOS', 'AMP T', 'LIP', 'SKINTU', 'CUSAT', 'FMHEAD', 'CLOT', 'BRTRES', 'HEART TX', 'VOCBX', 'ANT', 'LUNG TX', 'CAP', 'STOMA', 'KID-BX', 'HEM', 'SDSTY-26', 'TONGBX', 'BONBX', 'FIS', 'DEB', 'LIVTUM', 'SIN BX', 'KID', 'G-CYST', 'BX-LAR', 'CXLP', 'TURB', 'PROSBX', 'UTNON', 'COND', 'MB', 'PLACOTH', 'OMNON', 'KIDNEY', 'PAR', 'AMPU', 'ANUS', 'VUL', 'SKINPLA', 'VES', 'HEMA', 'PILO', 'EYE', 'SPL', 'LIVTX', 'BRES', 'OVBEN', 'STAP', 'COLONTUMO', 'PANC-BX', 'AMP F', 'UTP', 'TONSBX', 'TIS07', 'LIPBX', 'MAR', 'PITT', 'UTNEO', 'SG', 'CHO', 'MLB', 'AN', 'LUNGWNT', 'LNLRG', 'KIDTR', 'SEP', 'SYNCYST', 'OVC', 'ANAS2', 'PROSTUR', 'LEI', 'URBX', 'HEARTNOS', 'PHAR', 'LUNGWG', 'LN DIS', 'DM', 'SYN', 'PLEBX', 'KIDNT', 'HS', 'SCAR', 'BREBX', 'ECTOPC', 'HIDZ', 'TWIN', 'CORN', 'TA BX', 'HEARTENDO', 'GRAN', 'OVAR-B', 'PLEURA', 'AMPTRA', 'OMBX', 'ADR', 'MLG', 'APPY', 'PTY', 'SLN', 'GRT', 'BONF', 'PERBX', 'FHPATH', 'BRMAR', 'DUCTCYST', 'OMTUM', 'COLOS', 'PALATE', 'BONE RES', 'LIVER TX', 'SDSTY-145', 'DENCYS', 'TESOTH', 'STL', 'LIVRES', 'LUNGRESNON', 'OV', 'SNB', 'UREBX', 'BRRES', 'HYD', 'THYI', 'TRA', 'THYOTH', 'STONON', 'DIV', 'SOFTSIM', 'NEU', 'SOFTEXT', 'SD', 'STOTUM', 'LN DISLEV', 'MTR', 'NA', 'FAS', 'SPINC', 'BRT', '"FT', 'NERVE', 'TONR']
+    #25 list, 129 labels, 25%, max 460, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'COLONBX1', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'ECC1', 'SHAVE1', 'BONE', 'ENDOME', 'TONS', 'LUNGTP', 'LIVNB', 'SDSTY-138', 'VALVE', 'TONSILS', 'FORESK', 'SC', 'DUOBX', 'LN', 'BBT', 'POC', 'AMPEX', 'VAS', 'BOWNT', 'SDSTY-116', 'VULBX', 'BLTUR', 'PLAQUE', 'SKINN', 'CYST', 'BBNON', 'PTH', 'VAGBX', 'THYROIDNT', 'CNOS', 'AMP T', 'LIP', 'SKINTU', 'CUSAT', 'FMHEAD', 'CLOT', 'BRTRES', 'HEART TX', 'VOCBX', 'ANT', 'LUNG TX', 'CAP', 'STOMA', 'KID-BX', 'HEM', 'SDSTY-26', 'TONGBX', 'BONBX', 'FIS', 'DEB', 'LIVTUM', 'SIN BX', 'KID', 'G-CYST', 'BX-LAR', 'CXLP', 'TURB', 'PROSBX', 'UTNON', 'COND', 'MB', 'PLACOTH', 'OMNON', 'KIDNEY', 'PAR', 'AMPU', 'ANUS', 'VUL', 'SKINPLA', 'VES', 'HEMA', 'PILO', 'EYE', 'SPL', 'LIVTX', 'BRES', 'OVBEN', 'STAP', 'COLONTUMO', 'PANC-BX', 'AMP F', 'UTP', 'TONSBX', 'TIS07', 'LIPBX', 'MAR', 'PITT', 'UTNEO', 'SG', 'CHO', 'MLB', 'AN', 'LUNGWNT', 'LNLRG', 'KIDTR', 'SEP', 'SYNCYST', 'OVC', 'ANAS2', 'PROSTUR', 'LEI', 'URBX', 'HEARTNOS', 'PHAR', 'LUNGWG', 'LN DIS', 'DM', 'SYN', 'PLEBX', 'KIDNT', 'HS']
+    #50 list,90 labels, 62% ,max 460, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'COLONBX1', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'ECC1', 'SHAVE1', 'BONE', 'ENDOME', 'TONS', 'LUNGTP', 'LIVNB', 'SDSTY-138', 'VALVE', 'TONSILS', 'FORESK', 'SC', 'DUOBX', 'LN', 'BBT', 'POC', 'AMPEX', 'VAS', 'BOWNT', 'SDSTY-116', 'VULBX', 'BLTUR', 'PLAQUE', 'SKINN', 'CYST', 'BBNON', 'PTH', 'VAGBX', 'THYROIDNT', 'CNOS', 'AMP T', 'LIP', 'SKINTU', 'CUSAT', 'FMHEAD', 'CLOT', 'BRTRES', 'HEART TX', 'VOCBX', 'ANT', 'LUNG TX', 'CAP', 'STOMA', 'KID-BX', 'HEM', 'SDSTY-26', 'TONGBX', 'BONBX', 'FIS', 'DEB', 'LIVTUM', 'SIN BX', 'KID', 'G-CYST', 'BX-LAR', 'CXLP', 'TURB', 'PROSBX', 'UTNON', 'COND', 'MB', 'PLACOTH', 'OMNON', 'KIDNEY', 'PAR', 'AMPU', 'ANUS', 'VUL', 'SKINPLA', 'VES', 'HEMA', 'PILO']
+    # 100 list, 63 labels, 82%, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'VAGBX', 'LUNGNON', 'EMB', 'CYST', 'GB', 'APP', 'POC', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'G-CYST', 'NBB', 'LIP', 'HERNIA', 'SDSTY-138', 'AMPEX', 'BLTUR', 'STOBX', 'CLOT', 'KID-BX', 'TISNON', 'THYROIDNT', 'LN', 'CXBX', 'HEM', 'FMHEAD', 'PLAT', 'SKINN', 'CNOS', 'FALLSTER', 'ECC1', 'SHAVE1', 'PLAQUE', 'DEB', 'RECBX1', 'FIS', 'LUNGTP', 'FORESK', 'ESOBX', 'BOWNT', 'LUNG TX', 'ENDOME', 'DUOBX', 'SDSTY-26', 'BONE', 'PTH', 'SKINTU', 'ANT', 'VULBX', 'TONS', 'SDSTY-116', 'HEART TX', 'AMP T', 'CUSAT', 'MB', 'BBNON', 'TONGBX', 'BONBX', 'TONSILS']
+    # 100 list, 54 labels, 92%, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'POC', 'VALVE', 'COLONBX1', 'LIVNB', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'SDSTY-138', 'LN', 'SC', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'BBT', 'ECC1', 'SHAVE1', 'LUNGTP', 'FORESK', 'BONE', 'ENDOME', 'DUOBX', 'TONS', 'TONSILS', 'AMPEX', 'VAS', 'BOWNT', 'SDSTY-116', 'VULBX', 'BLTUR', 'PLAQUE', 'SKINN', 'CYST', 'BBNON', 'PTH', 'VAGBX', 'THYROIDNT', 'CNOS', 'AMP T', 'LIP', 'SKINTU', 'CUSAT', 'FMHEAD', 'CLOT']
+    #150 list 34 labels, 89%, epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'POC', 'VALVE', 'COLONBX1', 'LIVNB', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'SDSTY-138', 'LN', 'SC', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'BBT', 'ECC1', 'SHAVE1', 'LUNGTP', 'FORESK', 'BONE', 'ENDOME', 'DUOBX', 'TONS', 'TONSILS']
+    # 200 list, 31 labels, 92% epoc 4
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'STOBX', 'TISNON', 'CXBX', 'PLAT', 'SKINN', 'ECC1', 'SHAVE1', 'PLAQUE', 'RECBX1', 'LUNGTP', 'FORESK', 'ESOBX', 'ENDOME', 'DUOBX', 'BONE', 'TONS', 'TONSILS']
+    # 200 list, 22 labels, 91% epoc 4
+    #type_list = ["SHAVE1","ENDOME","SKINBX","EMB","TISDIAG","COLONBX1","ESOBX","NBB","TISNON","STOBX","RECBX1","CXBX","SKIN","LUNGNON","GB","APP","HEARTTP","HERNIA","FALLSTER","PLAT","ECC1","BONE","TONS"]
+    # 250 list, 20 labels,
+    #type_list = ["SKINBX","EMB","TISDIAG","COLONBX1","ESOBX","NBB","TISNON","STOBX","RECBX1","CXBX","SKIN","LUNGNON","GB","APP","HEARTTP","HERNIA","FALLSTER","PLAT","ECC1","BONE","TONS"]
+    # 375 list, 15 labels, 94% epoc 4
+    #type_list = ["SKIN", "SKINBX", "LUNGNON", "EMB", "TISDIAG", "GB", "APP", "COLONBX1", "ESOBX", "NBB", "TISNON","HERNIA", "STOBX", "RECBX1", "ECC1", "TONS"]
+    # 500 list, 10 labels, 93% epoc 4
+    #type_list = ["SKINBX", "EMB", "TISDIAG", "GB", "COLONBX1", "ESOBX", "NBB", "TISNON", "STOBX", "RECBX1"]
+
+    '''
     casemap, labelmap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    partcountmap = gross_parse(casemap,outputfile)
+    partcountmap = gross_parse(casemap,outputfile, 199)
+
+    somelist = []
     for part in partcountmap:
         print(str(part[1]) + "->" + part[0])
-    #run_model()
+        if part[1] >= 199:
+            somelist.append(part[0])
 
+    print(somelist)
+    '''
 
+    run_model()
 
 if __name__ == "__main__":
     main()
