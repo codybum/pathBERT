@@ -56,6 +56,30 @@ def multiNumber(numberList, firstline):
 
     return False
 
+def lm_gross_dump():
+
+
+    count = 0
+
+    wft = open('path.train.raw', "w")
+    wfv = open('path.test.raw', "w")
+
+    json_master_file_path = '/Users/cody/Desktop/copath_data/grossfinal/master.json'
+
+    with open(json_master_file_path) as json_file:
+        data = json.load(json_file)
+        for case in data:
+            gross_strings = case['gross_description']
+            if count <= 90000:
+                wft.write(gross_strings)
+            elif (count > 90000) and (count <= 99486):
+                wfv.write(gross_strings)
+            count += 1
+    wft.close()
+    wfv.close()
+    print(count)
+
+
 def gross_parse(casemap, outputfile, partlimit):
 
 
@@ -217,13 +241,8 @@ def gross_parse(casemap, outputfile, partlimit):
 
                         s = case['gross_description']
 
-                        #s = s.replace("\t", " ").replace("\n", " ")
-
+                        '''
                         strlen = len(nltk.word_tokenize(s))
-
-                        #sentences = tokenizer.tokenize(s)
-                        #print(sentences)
-                        #exit(0)
 
                         if strlen > 375:
                             sentences = tokenizer.tokenize(case['gross_description'])
@@ -253,6 +272,7 @@ def gross_parse(casemap, outputfile, partlimit):
                             else:
                                 partCountMap[type] = 1
                                 wf.write(s + "\t" + str(type_list.index(type)) + "\n")
+                        '''
 
                     elif isMultiPart:
                         multipart_count.append(case_id)
@@ -331,6 +351,8 @@ def main():
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1","BRES"]
 
+    lm_gross_dump()
+
     '''
     type_list = []
     casemap, labelmap = parsetypelist(masterfile, type_list)
@@ -348,7 +370,7 @@ def main():
     #50 list,90 labels, 62% ,max 460, epoc 4
     #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'COLONBX1', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'ECC1', 'SHAVE1', 'BONE', 'ENDOME', 'TONS', 'LUNGTP', 'LIVNB', 'SDSTY-138', 'VALVE', 'TONSILS', 'FORESK', 'SC', 'DUOBX', 'LN', 'BBT', 'POC', 'AMPEX', 'VAS', 'BOWNT', 'SDSTY-116', 'VULBX', 'BLTUR', 'PLAQUE', 'SKINN', 'CYST', 'BBNON', 'PTH', 'VAGBX', 'THYROIDNT', 'CNOS', 'AMP T', 'LIP', 'SKINTU', 'CUSAT', 'FMHEAD', 'CLOT', 'BRTRES', 'HEART TX', 'VOCBX', 'ANT', 'LUNG TX', 'CAP', 'STOMA', 'KID-BX', 'HEM', 'SDSTY-26', 'TONGBX', 'BONBX', 'FIS', 'DEB', 'LIVTUM', 'SIN BX', 'KID', 'G-CYST', 'BX-LAR', 'CXLP', 'TURB', 'PROSBX', 'UTNON', 'COND', 'MB', 'PLACOTH', 'OMNON', 'KIDNEY', 'PAR', 'AMPU', 'ANUS', 'VUL', 'SKINPLA', 'VES', 'HEMA', 'PILO']
     # 100-300 list, 71 labels, 94%, epoc 6, biobert 1.1
-    type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'STOBX', 'TISNON', 'CXBX', 'PLAT', 'SKINN', 'RECBX1', 'LUNGTP', 'FORESK', 'ESOBX', 'ENDOME', 'BONE', 'TONS', 'TONSILS', 'ECC1', 'DUOBX', 'KID-BX', 'AMPEX', 'SHAVE1', 'AMP T', 'POC', 'PLAQUE', 'VULBX', 'FMHEAD', 'BLTUR', 'BOWNT', 'CYST', 'PTH', 'DEB', 'LIP', 'LN', 'VAGBX', 'SDSTY-116', 'HEM', 'CLOT', 'STOMA', 'CUSAT', 'THYROIDNT', 'CNOS', 'ANT', 'MB', 'EYE', 'SKINTU', 'HEART TX', 'FIS', 'SDSTY-26', 'UTNON', 'KID', 'BBNON', 'LUNG TX', 'G-CYST', 'FALLSTER', 'TONGBX', 'BONBX', 'PLACOTH', 'AMPU', 'MLB', 'VOCBX']
+    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'STOBX', 'TISNON', 'CXBX', 'PLAT', 'SKINN', 'RECBX1', 'LUNGTP', 'FORESK', 'ESOBX', 'ENDOME', 'BONE', 'TONS', 'TONSILS', 'ECC1', 'DUOBX', 'KID-BX', 'AMPEX', 'SHAVE1', 'AMP T', 'POC', 'PLAQUE', 'VULBX', 'FMHEAD', 'BLTUR', 'BOWNT', 'CYST', 'PTH', 'DEB', 'LIP', 'LN', 'VAGBX', 'SDSTY-116', 'HEM', 'CLOT', 'STOMA', 'CUSAT', 'THYROIDNT', 'CNOS', 'ANT', 'MB', 'EYE', 'SKINTU', 'HEART TX', 'FIS', 'SDSTY-26', 'UTNON', 'KID', 'BBNON', 'LUNG TX', 'G-CYST', 'FALLSTER', 'TONGBX', 'BONBX', 'PLACOTH', 'AMPU', 'MLB', 'VOCBX']
     # 100 list, 63 labels, 82%, epoc 4
     #type_list = ['SKIN P', 'SKINBX', 'VAGBX', 'LUNGNON', 'EMB', 'CYST', 'GB', 'APP', 'POC', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'G-CYST', 'NBB', 'LIP', 'HERNIA', 'SDSTY-138', 'AMPEX', 'BLTUR', 'STOBX', 'CLOT', 'KID-BX', 'TISNON', 'THYROIDNT', 'LN', 'CXBX', 'HEM', 'FMHEAD', 'PLAT', 'SKINN', 'CNOS', 'FALLSTER', 'ECC1', 'SHAVE1', 'PLAQUE', 'DEB', 'RECBX1', 'FIS', 'LUNGTP', 'FORESK', 'ESOBX', 'BOWNT', 'LUNG TX', 'ENDOME', 'DUOBX', 'SDSTY-26', 'BONE', 'PTH', 'SKINTU', 'ANT', 'VULBX', 'TONS', 'SDSTY-116', 'HEART TX', 'AMP T', 'CUSAT', 'MB', 'BBNON', 'TONGBX', 'BONBX', 'TONSILS']
     # 100 list, 54 labels, 92%, epoc 4
@@ -378,10 +400,10 @@ def main():
     #1000 list, 25 labels
     #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'TISDIAG', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'AMPEX', 'STOBX', 'TISNON', 'PLAT', 'SKINN', 'RECBX1', 'ESOBX', 'BOWNT', 'UTNON', 'TONS', 'SDSTY-116', 'AMP T', 'TONSILS']
 
-
+    '''
     casemap, labelmap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    partcountmap = gross_parse(casemap,outputfile, 300)
+    partcountmap = gross_parse(casemap,outputfile, 99)
 
     somelist = []
     for part in partcountmap:
@@ -390,6 +412,7 @@ def main():
             somelist.append(part[0])
 
     print(somelist)
+    '''
 
     #run_model()
 
