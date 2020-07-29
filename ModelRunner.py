@@ -55,19 +55,6 @@ def run_model():
         print('No GPU available, using the CPU instead.')
         device = torch.device("cpu")
 
-    print('Download dataset...')
-
-    # The URL for the dataset zip file.
-    url = 'https://nyu-mll.github.io/CoLA/cola_public_1.1.zip'
-
-    # Download the file (if we haven't already)
-    if not os.path.exists('./cola_public_1.1.zip'):
-        wget.download(url, './cola_public_1.1.zip')
-
-    # Unzip the dataset (if we haven't already)
-    if not os.path.exists('./cola_public/'):
-        with zipfile.ZipFile("./cola_public_1.1.zip", 'r') as zip_ref:
-            zip_ref.extractall('./')
 
     print('Load dataset...')
 
@@ -210,7 +197,8 @@ def run_model():
     # Note: AdamW is a class from the huggingface library (as opposed to pytorch)
     # I believe the 'W' stands for 'Weight Decay fix"
     optimizer = AdamW(model.parameters(),
-                      lr=2e-5,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
+                      #lr=2e-5,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
+                      lr=1e-5,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
                       eps=1e-8  # args.adam_epsilon  - default is 1e-8.
                       )
 
