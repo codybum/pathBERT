@@ -241,7 +241,7 @@ def gross_parse(casemap, outputfile, partlimit):
 
                         s = case['gross_description']
 
-                        '''
+
                         strlen = len(nltk.word_tokenize(s))
 
                         if strlen > 375:
@@ -262,7 +262,7 @@ def gross_parse(casemap, outputfile, partlimit):
                         s = ''.join(ch for ch in s if ch not in exclude)
 
                         s = re.sub(r'\d+', '', s)
-                        s = s.lower()
+                        #s = s.lower()
 
                         if (len(s) > 25):
                             if type in partCountMap:
@@ -272,7 +272,7 @@ def gross_parse(casemap, outputfile, partlimit):
                             else:
                                 partCountMap[type] = 1
                                 wf.write(s + "\t" + str(type_list.index(type)) + "\n")
-                        '''
+
 
                     elif isMultiPart:
                         multipart_count.append(case_id)
@@ -351,7 +351,7 @@ def main():
     masterfile = "/Users/cody/Desktop/copath_data/master.csv"
     #type_list = ["ESO", "ESOBX", "STOBX", "COLONBX1","BRES"]
 
-    lm_gross_dump()
+    #lm_gross_dump()
 
     '''
     type_list = []
@@ -378,7 +378,7 @@ def main():
     #150 list 34 labels, 89%, epoc 4
     #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'TISDIAG', 'GB', 'APP', 'POC', 'VALVE', 'COLONBX1', 'LIVNB', 'HEARTTP', 'ESOBX', 'NBB', 'TISNON', 'HERNIA', 'SDSTY-138', 'LN', 'SC', 'STOBX', 'RECBX1', 'CXBX', 'FALLSTER', 'PLAT', 'BBT', 'ECC1', 'SHAVE1', 'LUNGTP', 'FORESK', 'BONE', 'ENDOME', 'DUOBX', 'TONS', 'TONSILS']
     # 200 list, 38 labels, % epoc, biobert 1.1
-    #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'POC', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'AMPEX', 'BLTUR', 'STOBX', 'KID-BX', 'TISNON', 'CXBX', 'FMHEAD', 'PLAT', 'SKINN', 'ECC1', 'SHAVE1', 'PLAQUE', 'RECBX1', 'LUNGTP', 'FORESK', 'ESOBX', 'ENDOME', 'DUOBX', 'BONE', 'VULBX', 'TONS', 'AMP T', 'TONSILS']
+    type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'POC', 'VALVE', 'TISDIAG', 'LIVNB', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'AMPEX', 'BLTUR', 'STOBX', 'KID-BX', 'TISNON', 'CXBX', 'FMHEAD', 'PLAT', 'SKINN', 'ECC1', 'SHAVE1', 'PLAQUE', 'RECBX1', 'LUNGTP', 'FORESK', 'ESOBX', 'ENDOME', 'DUOBX', 'BONE', 'VULBX', 'TONS', 'AMP T', 'TONSILS']
     # 200 list, 31 labels, 94% epoc 4
     # 200 list, 31 labels, 95% epoc 6, lr=1e5, batch=16
     # 200 list, 31 labels, 95% epoc 6, lr=2e5, batch=32 clinical+bio
@@ -400,19 +400,17 @@ def main():
     #1000 list, 25 labels
     #type_list = ['SKIN P', 'SKINBX', 'LUNGNON', 'EMB', 'GB', 'APP', 'TISDIAG', 'COLONBX1', 'HEARTTP', 'NBB', 'HERNIA', 'SDSTY-138', 'AMPEX', 'STOBX', 'TISNON', 'PLAT', 'SKINN', 'RECBX1', 'ESOBX', 'BOWNT', 'UTNON', 'TONS', 'SDSTY-116', 'AMP T', 'TONSILS']
 
-    '''
     casemap, labelmap = parsetypelist(masterfile, type_list)
     outputfile = "slist.tsv"
-    partcountmap = gross_parse(casemap,outputfile, 99)
+    partcountmap = gross_parse(casemap,outputfile, 199)
 
     somelist = []
     for part in partcountmap:
         print(str(part[1]) + "->" + part[0])
-        if part[1] >= 99:
+        if part[1] >= 199:
             somelist.append(part[0])
 
     print(somelist)
-    '''
 
     #run_model()
 

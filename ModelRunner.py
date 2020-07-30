@@ -1,21 +1,15 @@
-import tensorflow as tf
 import torch
-import wget
-import os
-import pandas as pd
-import zipfile
 from transformers import BertTokenizer
 from torch.utils.data import TensorDataset, random_split
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import BertForSequenceClassification, AdamW, BertConfig
 from transformers import get_linear_schedule_with_warmup
-import numpy as np
 import time
 import datetime
 import random
 import numpy as np
 import pandas as pd
-import nltk.data
+import wandb
 
 def format_time(elapsed):
     '''
@@ -39,6 +33,19 @@ def flat_accuracy(preds, labels):
 
 
 def run_model():
+
+    # Initialize wandb
+    wandb.init(project="pathbert")
+    config = wandb.config
+    config.train_split = 0.9
+    config.batch_size = 32  # size of 16 or 32 recommended
+    config.num_labels = 38  # number of class labels
+    config.lr = 1e-5  # args.learning_rate - default is 5e-5, our notebook had 2e-5
+    config.eps = 1e-8  # args.adam_epsilon  - default is 1e-8.
+    config.num_warmup_steps = 0  # Default value in run_glue.py
+    config.seed_val = 42  # Set the seed value to make this reproducible.
+    config.epochs = 2
+    config.padding = 'longest'
 
     # If there's a GPU available...
     if torch.cuda.is_available():
@@ -106,6 +113,7 @@ def run_model():
         max_len = max(max_len, len(input_ids))
 
     print('Max sentence length: ', max_len)
+    config.max_len = max_len
 
     # Tokenize all of the sentences and map the tokens to thier word IDs.
     input_ids = []
@@ -123,9 +131,9 @@ def run_model():
         encoded_dict = tokenizer.encode_plus(
             sent,  # Sentence to encode.
             add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-            max_length=457,  # Pad & truncate all sentences.
+            max_length=config.max_len,  # Pad & truncate all sentences.
             truncation=True,  # Pad & truncate all sentences.
-            pad_to_max_length=True,
+            padding=config.padding,
             return_attention_mask=True,  # Construct attn. masks.
             return_tensors='pt',  # Return pytorch tensors.
         )
@@ -151,8 +159,11 @@ def run_model():
     # Create a 90-10 train-validation split.
 
     # Calculate the number of samples to include in each set.
-    train_size = int(0.9 * len(dataset))
+    train_size = int(config.train_split * len(dataset))
     val_size = len(dataset) - train_size
+
+    config.train_size = train_size
+    config.val_size = val_size
 
     # Divide the dataset by randomly selecting samples.
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
@@ -163,7 +174,7 @@ def run_model():
     # The DataLoader needs to know our batch size for training, so we specify it
     # here. For fine-tuning BERT on a specific task, the authors recommend a batch
     # size of 16 or 32.
-    batch_size = 32
+    batch_size = config.batch_size
 
     # Create the DataLoaders for our training and validation sets.
     # We'll take training samples in random order.
@@ -185,7 +196,7 @@ def run_model():
     model = BertForSequenceClassification.from_pretrained(
         #"bert-base-uncased",  # Use the 12-layer BERT model, with an uncased vocab.
         './model',
-        num_labels=4,  # The number of output labels--2 for binary classification.
+        num_labels=config.num_labels,  # The number of output labels--2 for binary classification.
         # You can increase this for multi-class tasks.
         output_attentions=False,  # Whether the model returns attentions weights.
         output_hidden_states=False,  # Whether the model returns all hidden-states.
@@ -198,14 +209,18 @@ def run_model():
     # I believe the 'W' stands for 'Weight Decay fix"
     optimizer = AdamW(model.parameters(),
                       #lr=2e-5,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
-                      lr=1e-5,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
-                      eps=1e-8  # args.adam_epsilon  - default is 1e-8.
+                      lr=config.lr,  # args.learning_rate - default is 5e-5, our notebook had 2e-5
+                      eps=config.eps  # args.adam_epsilon  - default is 1e-8.
                       )
+
+    # WandB – wandb.watch() automatically fetches all layer dimensions, gradients, model parameters and logs them automatically to your dashboard.
+    # Using log="all" log histograms of parameter values in addition to gradients
+    wandb.watch(model, log="all")
 
     # Number of training epochs. The BERT authors recommend between 2 and 4.
     # We chose to run for 4, but we'll see later that this may be over-fitting the
     # training data.
-    epochs = 4
+    epochs = config.epochs
 
     # Total number of training steps is [number of batches] x [number of epochs].
     # (Note that this is not the same as the number of training samples).
@@ -213,14 +228,14 @@ def run_model():
 
     # Create the learning rate scheduler.
     scheduler = get_linear_schedule_with_warmup(optimizer,
-                                                num_warmup_steps=0,  # Default value in run_glue.py
+                                                num_warmup_steps=config.num_warmup_steps,  # Default value in run_glue.py
                                                 num_training_steps=total_steps)
 
     # This training code is based on the `run_glue.py` script here:
     # https://github.com/huggingface/transformers/blob/5bfcd0485ece086ebcbed2d008813037968a9e58/examples/run_glue.py#L128
 
     # Set the seed value all over the place to make this reproducible.
-    seed_val = 42
+    seed_val = config.seed_val
 
     random.seed(seed_val)
     np.random.seed(seed_val)
@@ -408,6 +423,9 @@ def run_model():
 
         print("  Validation Loss: {0:.2f}".format(avg_val_loss))
         print("  Validation took: {:}".format(validation_time))
+
+        #logging performance
+        wandb.log({"Test Accuracy": avg_val_accuracy, "Test Loss": avg_val_loss})
 
         # Record all statistics from this epoch.
         training_stats.append(
